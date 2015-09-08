@@ -53,6 +53,8 @@
       ],
       'variables': {
         'exported_deps': [
+          'libpermission_broker-client',
+          'libshill-client',
           'libshill-net-<(libbase_ver)',
         ],
         'deps': ['<@(exported_deps)'],
@@ -80,28 +82,6 @@
         'service.cc',
         'shill_proxy.cc',
       ],
-      'actions': [
-        {
-          'action_name': 'generate-shill-proxies',
-          'variables': {
-            'proxy_output_file': 'include/shill/dbus-proxies.h'
-          },
-          'sources': [
-            '../shill/dbus_bindings/org.chromium.flimflam.Manager.xml',
-          ],
-          'includes': ['../common-mk/generate-dbus-proxies.gypi'],
-        },
-        {
-          'action_name': 'generate-permission_broker-proxies',
-          'variables': {
-            'proxy_output_file': 'include/permission_broker/dbus-proxies.h'
-          },
-          'sources': [
-            '../permission_broker/dbus_bindings/org.chromium.PermissionBroker.xml',
-          ],
-          'includes': ['../common-mk/generate-dbus-proxies.gypi'],
-        },
-      ],
     },
     {
       'target_name': 'apmanager',
@@ -115,6 +95,30 @@
       'sources': [
         'main.cc',
       ],
+    },
+    # apmanager client library generated headers. Used by other daemons to
+    # interact with apmanager.
+    {
+      'target_name': 'libapmanager-client-headers',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'libapmanager-client-dbus-proxies',
+          'variables': {
+            'dbus_service_config': 'dbus_bindings/dbus-service-config.json',
+            'proxy_output_file': 'include/apmanager/dbus-proxies.h',
+            'mock_output_file': 'include/apmanager/dbus-proxy-mocks.h',
+            'proxy_path_in_mocks': 'apmanager/dbus-proxies.h',
+          },
+          'sources': [
+            'dbus_bindings/org.chromium.apmanager.Config.xml',
+            'dbus_bindings/org.chromium.apmanager.Device.xml',
+            'dbus_bindings/org.chromium.apmanager.Manager.xml',
+            'dbus_bindings/org.chromium.apmanager.Service.xml',
+          ],
+          'includes': ['../common-mk/generate-dbus-proxies.gypi'],
+        },
+      ]
     },
   ],
   'conditions': [
