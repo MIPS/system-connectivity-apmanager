@@ -29,6 +29,11 @@
     'cflags_cc': [
       '-Wno-missing-field-initializers', # for LAZY_INSTANCE_INITIALIZER
     ],
+    'include_dirs': [
+      # We need this include dir because we include all the local code as
+      # "apmanager/...".
+      '<(platform2_root)/../aosp/system/connectivity',
+    ],
   },
   'targets': [
     {
@@ -43,7 +48,7 @@
         'dbus_bindings/org.chromium.apmanager.Manager.xml',
         'dbus_bindings/org.chromium.apmanager.Service.xml',
       ],
-      'includes': ['../common-mk/generate-dbus-adaptors.gypi'],
+      'includes': ['../../../../platform2/common-mk/generate-dbus-adaptors.gypi'],
     },
     {
       'target_name': 'libapmanager',
@@ -116,7 +121,7 @@
             'dbus_bindings/org.chromium.apmanager.Manager.xml',
             'dbus_bindings/org.chromium.apmanager.Service.xml',
           ],
-          'includes': ['../common-mk/generate-dbus-proxies.gypi'],
+          'includes': ['../../../../platform2/common-mk/generate-dbus-proxies.gypi'],
         },
       ]
     },
@@ -128,7 +133,7 @@
           'target_name': 'apmanager_testrunner',
           'type': 'executable',
           'dependencies': ['libapmanager'],
-          'includes': ['../common-mk/common_test.gypi'],
+          'includes': ['../../../../platform2/common-mk/common_test.gypi'],
           'sources': [
             'config_unittest.cc',
             'device_info_unittest.cc',
