@@ -88,23 +88,13 @@ include $(BUILD_STATIC_TEST_LIBRARY)
 # === apmanager ===
 include $(CLEAR_VARS)
 LOCAL_MODULE := apmanager
-#LOCAL_REQUIRED_MODULES := init.apmanager.rc
+LOCAL_INIT_RC := apmanager.rc
 LOCAL_SRC_FILES := \
     main.cc
 LOCAL_STATIC_LIBRARIES := libapmanager
 LOCAL_C_INCLUDES += external/gtest/include
 $(eval $(apmanager_common))
 include $(BUILD_EXECUTABLE)
-
-# === init.apmanager.rc (brillo only) ===
-ifdef TARGET_COPY_OUT_INITRCD
-include $(CLEAR_VARS)
-LOCAL_MODULE := init.apmanager.rc
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_INITRCD)
-include $(BUILD_PREBUILT)
-endif
 
 # === unittest ===
 include $(CLEAR_VARS)
