@@ -19,11 +19,7 @@
 #include <base/bind.h>
 #include <chromeos/errors/error.h>
 
-#if !defined(__ANDROID__)
 #include "apmanager/shill_dbus_proxy.h"
-#else
-#include "apmanager/shill_stub_proxy.h"
-#endif  // __ANDROID__
 
 using std::string;
 
@@ -35,7 +31,6 @@ ShillManager::~ShillManager() {}
 
 void ShillManager::Init(const scoped_refptr<dbus::Bus>& bus) {
   CHECK(!shill_proxy_) << "Already init";
-#if !defined(__ANDROID__)
   shill_proxy_.reset(
       new ShillDBusProxy(
           bus,
@@ -43,9 +38,6 @@ void ShillManager::Init(const scoped_refptr<dbus::Bus>& bus) {
                      weak_factory_.GetWeakPtr()),
           base::Bind(&ShillManager::OnShillServiceVanished,
                      weak_factory_.GetWeakPtr())));
-#else
-  shill_proxy_.reset(new ShillStubProxy());
-#endif  // __ANDROID__
 }
 
 void ShillManager::ClaimInterface(const string& interface_name) {

@@ -30,6 +30,7 @@ define apmanager_common
       libdbus \
       libfirewalld-client \
       libminijail \
+      libshill-client \
       libshill-net
   LOCAL_C_INCLUDES += \
       $(LOCAL_PATH)/.. \
@@ -81,7 +82,7 @@ LOCAL_SRC_FILES := \
     process_factory.cc \
     service.cc \
     shill_manager.cc \
-    shill_stub_proxy.cc
+    shill_dbus_proxy.cc
 $(eval $(apmanager_common))
 include $(BUILD_STATIC_TEST_LIBRARY)
 
