@@ -44,8 +44,6 @@ define apmanager_common
       -Wno-missing-field-initializers
 endef
 
-ifeq ($(HOST_OS),linux)
-
 # === libapmanager-client (shared library) ===
 include $(CLEAR_VARS)
 LOCAL_MODULE := libapmanager-client
@@ -122,5 +120,3 @@ LOCAL_SRC_FILES := \
 LOCAL_STATIC_LIBRARIES := libapmanager libgmock
 $(eval $(apmanager_common))
 include $(BUILD_NATIVE_TEST)
-
-endif # HOST_OS == linux
