@@ -7,4 +7,3 @@ service apmanager /system/bin/apmanager
     class main
     user system
     group system dbus net_admin net_raw
-    disabled
