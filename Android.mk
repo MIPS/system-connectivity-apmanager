@@ -95,9 +95,12 @@ LOCAL_C_INCLUDES += external/gtest/include
 $(eval $(apmanager_common))
 include $(BUILD_EXECUTABLE)
 
-# === unittest ===
+# === apmanager_test ===
 include $(CLEAR_VARS)
-LOCAL_MODULE := apmanager_unittest
+LOCAL_MODULE := apmanager_test
+ifdef BRILLO
+  LOCAL_MODULE_TAGS := debug
+endif # BRILLO
 LOCAL_SRC_FILES := \
     config_unittest.cc \
     device_info_unittest.cc \
