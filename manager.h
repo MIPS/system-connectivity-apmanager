@@ -32,6 +32,8 @@
 
 namespace apmanager {
 
+class ControlInterface;
+
 class Manager : public org::chromium::apmanager::ManagerAdaptor,
                 public org::chromium::apmanager::ManagerInterface {
  public:
@@ -55,6 +57,7 @@ class Manager : public org::chromium::apmanager::ManagerAdaptor,
 
   // Register DBus object.
   void RegisterAsync(
+      ControlInterface* control_interface,
       brillo::dbus_utils::ExportedObjectManager* object_manager,
       const scoped_refptr<dbus::Bus>& bus,
       brillo::dbus_utils::AsyncEventSequencer* sequencer);
