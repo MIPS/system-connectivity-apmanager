@@ -21,7 +21,7 @@
 
 #include <base/lazy_instance.h>
 
-#include <chromeos/process.h>
+#include <brillo/process.h>
 
 namespace apmanager {
 
@@ -32,7 +32,7 @@ class ProcessFactory {
   // This is a singleton. Use ProcessFactory::GetInstance()->Foo().
   static ProcessFactory* GetInstance();
 
-  virtual chromeos::Process* CreateProcess();
+  virtual brillo::Process* CreateProcess();
 
  protected:
   ProcessFactory();

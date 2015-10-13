@@ -31,7 +31,7 @@ class MockProcessFactory : public ProcessFactory {
   // This is a singleton. Use MockDHCPServerFactory::GetInstance()->Foo().
   static MockProcessFactory* GetInstance();
 
-  MOCK_METHOD0(CreateProcess, chromeos::Process*());
+  MOCK_METHOD0(CreateProcess, brillo::Process*());
 
  protected:
   MockProcessFactory();
