@@ -39,7 +39,6 @@ using std::string;
 namespace {
   const uint16_t kServerAddressIndex = 1;
   const char kTestInterfaceName[] = "test_interface";
-  const char kBinSleep[] = "/bin/sleep";
   const char kExpectedDnsmasqConfigFile[] =
       "port=0\n"
       "bind-interfaces\n"
@@ -55,10 +54,13 @@ namespace {
       "dhcp-leasefile=/data/misc/apmanager/dnsmasq/dhcpd-1.leases\n";
 #endif  // __ANDROID__
 
-  const char kDnsmasqConfigFilePath[] =
 #if !defined(__ANDROID__)
+  const char kBinSleep[] = "/bin/sleep";
+  const char kDnsmasqConfigFilePath[] =
       "/var/run/apmanager/dnsmasq/dhcpd-1.conf";
 #else
+  const char kBinSleep[] = "/system/bin/sleep";
+  const char kDnsmasqConfigFilePath[] =
       "/data/misc/apmanager/dnsmasq/dhcpd-1.conf";
 #endif  // __ANDROID__
 }  // namespace
@@ -69,15 +71,13 @@ class DHCPServerTest : public testing::Test {
  public:
   DHCPServerTest()
       : dhcp_server_(new DHCPServer(kServerAddressIndex, kTestInterfaceName)),
-        rtnl_handler_(new shill::MockRTNLHandler()),
-        file_writer_(MockFileWriter::GetInstance()),
-        process_factory_(MockProcessFactory::GetInstance()) {}
+        rtnl_handler_(new shill::MockRTNLHandler()) {}
   virtual ~DHCPServerTest() {}
 
   virtual void SetUp() {
     dhcp_server_->rtnl_handler_ = rtnl_handler_.get();
-    dhcp_server_->file_writer_ = file_writer_;
-    dhcp_server_->process_factory_ = process_factory_;
+    dhcp_server_->file_writer_ = &file_writer_;
+    dhcp_server_->process_factory_ = &process_factory_;
   }
 
   virtual void TearDown() {
@@ -99,8 +99,8 @@ class DHCPServerTest : public testing::Test {
  protected:
   std::unique_ptr<DHCPServer> dhcp_server_;
   std::unique_ptr<shill::MockRTNLHandler> rtnl_handler_;
-  MockFileWriter* file_writer_;
-  MockProcessFactory* process_factory_;
+  MockFileWriter file_writer_;
+  MockProcessFactory process_factory_;
 };
 
 
@@ -122,7 +122,7 @@ TEST_F(DHCPServerTest, StartSuccess) {
   ProcessMock* process = new ProcessMock();
 
   const int kInterfaceIndex = 1;
-  EXPECT_CALL(*file_writer_,
+  EXPECT_CALL(file_writer_,
               Write(kDnsmasqConfigFilePath, kExpectedDnsmasqConfigFile))
       .WillOnce(Return(true));
   EXPECT_CALL(*rtnl_handler_.get(), GetInterfaceIndex(kTestInterfaceName))
@@ -131,7 +131,7 @@ TEST_F(DHCPServerTest, StartSuccess) {
       AddInterfaceAddress(kInterfaceIndex, _, _, _)).Times(1);
   EXPECT_CALL(*rtnl_handler_.get(),
       SetInterfaceFlags(kInterfaceIndex, IFF_UP, IFF_UP)).Times(1);
-  EXPECT_CALL(*process_factory_, CreateProcess()).WillOnce(Return(process));
+  EXPECT_CALL(process_factory_, CreateProcess()).WillOnce(Return(process));
   EXPECT_CALL(*process, Start()).WillOnce(Return(true));
   EXPECT_TRUE(dhcp_server_->Start());
   Mock::VerifyAndClearExpectations(rtnl_handler_.get());
