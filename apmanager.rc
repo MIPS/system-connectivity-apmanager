@@ -7,3 +7,7 @@ service apmanager /system/bin/apmanager
     class main
     user system
     group system dbus net_admin net_raw
+    disabled
+
+on property:wifi-setup.complete=1
+    enable apmanager
