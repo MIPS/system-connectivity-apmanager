@@ -1,10 +1,10 @@
-on boot
+on post-fs-data
     mkdir /data/misc/apmanager 0700 system system
     mkdir /data/misc/apmanager/hostapd 0700 system system
     mkdir /data/misc/apmanager/dnsmasq 0700 system system
 
 service apmanager /system/bin/apmanager
-    class main
+    class late_start
     user system
     group system dbus net_admin net_raw
     disabled
