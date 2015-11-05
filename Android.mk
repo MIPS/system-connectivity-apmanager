@@ -67,7 +67,9 @@ LOCAL_SRC_FILES := \
     dbus_bindings/org.chromium.apmanager.Service.dbus-xml \
     config.cc \
     daemon.cc \
-    dbus_control.cc \
+    dbus/dbus_control.cc \
+    dbus/firewalld_dbus_proxy.cc \
+    dbus/shill_dbus_proxy.cc \
     device.cc \
     device_info.cc \
     dhcp_server.cc \
@@ -75,13 +77,11 @@ LOCAL_SRC_FILES := \
     event_dispatcher.cc \
     file_writer.cc \
     firewall_manager.cc \
-    firewalld_dbus_proxy.cc \
     hostapd_monitor.cc \
     manager.cc \
     process_factory.cc \
     service.cc \
-    shill_manager.cc \
-    shill_dbus_proxy.cc
+    shill_manager.cc
 $(eval $(apmanager_common))
 include $(BUILD_STATIC_TEST_LIBRARY)
 
