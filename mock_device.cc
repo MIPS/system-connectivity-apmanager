@@ -18,7 +18,7 @@
 
 namespace apmanager {
 
-MockDevice::MockDevice() : Device(nullptr, "") {}
+MockDevice::MockDevice(Manager* manager) : Device(manager, "", 0) {}
 
 MockDevice::~MockDevice() {}
 

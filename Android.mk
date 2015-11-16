@@ -68,6 +68,7 @@ LOCAL_SRC_FILES := \
     config.cc \
     daemon.cc \
     dbus/dbus_control.cc \
+    dbus/device_dbus_adaptor.cc \
     dbus/firewalld_dbus_proxy.cc \
     dbus/shill_dbus_proxy.cc \
     device.cc \
@@ -107,9 +108,11 @@ LOCAL_SRC_FILES := \
     device_info_unittest.cc \
     device_unittest.cc \
     dhcp_server_unittest.cc \
+    fake_device_adaptor.cc \
     hostapd_monitor_unittest.cc \
     manager_unittest.cc \
     mock_config.cc \
+    mock_control.cc \
     mock_device.cc \
     mock_dhcp_server.cc \
     mock_dhcp_server_factory.cc \
