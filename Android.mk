@@ -67,6 +67,7 @@ LOCAL_SRC_FILES := \
     dbus_bindings/org.chromium.apmanager.Service.dbus-xml \
     config.cc \
     daemon.cc \
+    dbus/config_dbus_adaptor.cc \
     dbus/dbus_control.cc \
     dbus/device_dbus_adaptor.cc \
     dbus/firewalld_dbus_proxy.cc \
