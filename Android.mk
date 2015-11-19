@@ -76,6 +76,7 @@ LOCAL_SRC_FILES := \
     device_info.cc \
     dhcp_server.cc \
     dhcp_server_factory.cc \
+    error.cc \
     event_dispatcher.cc \
     file_writer.cc \
     firewall_manager.cc \
@@ -109,6 +110,7 @@ LOCAL_SRC_FILES := \
     device_info_unittest.cc \
     device_unittest.cc \
     dhcp_server_unittest.cc \
+    error_unittest.cc \
     fake_device_adaptor.cc \
     hostapd_monitor_unittest.cc \
     manager_unittest.cc \
