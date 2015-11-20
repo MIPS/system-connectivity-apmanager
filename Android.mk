@@ -127,6 +127,7 @@ LOCAL_SRC_FILES := \
     mock_manager.cc \
     mock_process_factory.cc \
     mock_service.cc \
+    mock_service_adaptor.cc \
     service_unittest.cc \
     run_all_tests.cc
 LOCAL_STATIC_LIBRARIES := libapmanager libgmock

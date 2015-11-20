@@ -27,7 +27,7 @@
 #if !defined(__ANDROID__)
 #include <chromeos/dbus/service_constants.h>
 #else
-#include "dbus/apmanager/dbus-constants.h"
+#include <dbus/apmanager/dbus-constants.h>
 #endif  // __ANDROID__
 
 #include "apmanager/error.h"
@@ -40,6 +40,7 @@
 #include "apmanager/mock_hostapd_monitor.h"
 #include "apmanager/mock_manager.h"
 #include "apmanager/mock_process_factory.h"
+#include "apmanager/mock_service_adaptor.h"
 
 using brillo::ProcessMock;
 using ::testing::_;
@@ -69,6 +70,8 @@ class ServiceTest : public testing::Test {
   ServiceTest()
       : manager_(&control_interface_),
         hostapd_monitor_(new MockHostapdMonitor()) {
+    ON_CALL(control_interface_, CreateServiceAdaptorRaw())
+        .WillByDefault(ReturnNew<MockServiceAdaptor>());
     ON_CALL(control_interface_, CreateConfigAdaptorRaw())
         .WillByDefault(ReturnNew<FakeConfigAdaptor>());
     // Defer creation of Service object to allow ControlInterface to
@@ -82,7 +85,7 @@ class ServiceTest : public testing::Test {
     service_->hostapd_monitor_.reset(hostapd_monitor_);
   }
 
-  bool StartService(brillo::ErrorPtr* error) {
+  bool StartService(Error* error) {
     return service_->StartInternal(error);
   }
 
@@ -98,6 +101,14 @@ class ServiceTest : public testing::Test {
     service_->config_.reset(config);
   }
 
+  void VerifyError(const Error& error,
+                   Error::Type expected_type,
+                   const std::string& expected_message_start) {
+    EXPECT_EQ(expected_type, error.type());
+    EXPECT_TRUE(
+        base::StartsWithASCII(error.message(), expected_message_start, false));
+  }
+
  protected:
   MockControl control_interface_;
   MockManager manager_;
@@ -108,26 +119,19 @@ class ServiceTest : public testing::Test {
   std::unique_ptr<Service> service_;
 };
 
-MATCHER_P(IsServiceErrorStartingWith, message, "") {
-  return arg != nullptr &&
-         arg->GetDomain() == brillo::errors::dbus::kDomain &&
-         arg->GetCode() == kServiceError &&
-         base::EndsWith(arg->GetMessage(), message, false);
-}
-
 TEST_F(ServiceTest, StartWhenServiceAlreadyRunning) {
   StartDummyProcess();
 
-  brillo::ErrorPtr error;
+  Error error;
   EXPECT_FALSE(StartService(&error));
-  EXPECT_THAT(error, IsServiceErrorStartingWith("Service already running"));
+  VerifyError(error, Error::kInternalError, "Service already running");
 }
 
 TEST_F(ServiceTest, StartWhenConfigFileFailed) {
   MockConfig* config = new MockConfig(&manager_);
   SetConfig(config);
 
-  brillo::ErrorPtr error;
+  Error error;
   EXPECT_CALL(*config, GenerateConfigFile(_, _)).WillOnce(Return(false));
   EXPECT_FALSE(StartService(&error));
 }
@@ -142,7 +146,7 @@ TEST_F(ServiceTest, StartSuccess) {
   ProcessMock* process = new ProcessMock();
 
   std::string config_str(kHostapdConfig);
-  brillo::ErrorPtr error;
+  Error error;
   EXPECT_CALL(*config, GenerateConfigFile(_, _)).WillOnce(
       DoAll(SetArgPointee<1>(config_str), Return(true)));
   EXPECT_CALL(file_writer_, Write(kHostapdConfigFilePath, kHostapdConfig))
@@ -156,14 +160,14 @@ TEST_F(ServiceTest, StartSuccess) {
   EXPECT_CALL(manager_, RequestDHCPPortAccess(_));
   EXPECT_CALL(*hostapd_monitor_, Start());
   EXPECT_TRUE(StartService(&error));
-  EXPECT_EQ(nullptr, error);
+  EXPECT_TRUE(error.IsSuccess());
 }
 
 TEST_F(ServiceTest, StopWhenServiceNotRunning) {
-  brillo::ErrorPtr error;
+  Error error;
   EXPECT_FALSE(service_->Stop(&error));
-  EXPECT_THAT(error, IsServiceErrorStartingWith(
-      "Service is not currently running"));
+  VerifyError(
+      error, Error::kInternalError, "Service is not currently running");
 }
 
 TEST_F(ServiceTest, StopSuccess) {
@@ -171,7 +175,7 @@ TEST_F(ServiceTest, StopSuccess) {
 
   MockConfig* config = new MockConfig(&manager_);
   SetConfig(config);
-  brillo::ErrorPtr error;
+  Error error;
   EXPECT_CALL(*config, ReleaseDevice()).Times(1);
   EXPECT_TRUE(service_->Stop(&error));
   Mock::VerifyAndClearExpectations(config);
