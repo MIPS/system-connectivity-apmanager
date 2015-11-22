@@ -71,6 +71,7 @@ LOCAL_SRC_FILES := \
     dbus/dbus_control.cc \
     dbus/device_dbus_adaptor.cc \
     dbus/firewalld_dbus_proxy.cc \
+    dbus/manager_dbus_adaptor.cc \
     dbus/service_dbus_adaptor.cc \
     dbus/shill_dbus_proxy.cc \
     device.cc \
