@@ -76,7 +76,7 @@ class ServiceTest : public testing::Test {
         .WillByDefault(ReturnNew<FakeConfigAdaptor>());
     // Defer creation of Service object to allow ControlInterface to
     // setup expectations for generating fake adaptors.
-    service_.reset(new Service(&manager_, kServiceIdentifier));
+    service_ = new Service(&manager_, kServiceIdentifier);
   }
   virtual void SetUp() {
     service_->dhcp_server_factory_ = &dhcp_server_factory_;
@@ -116,7 +116,7 @@ class ServiceTest : public testing::Test {
   MockFileWriter file_writer_;
   MockProcessFactory process_factory_;
   MockHostapdMonitor* hostapd_monitor_;
-  std::unique_ptr<Service> service_;
+  scoped_refptr<Service> service_;
 };
 
 TEST_F(ServiceTest, StartWhenServiceAlreadyRunning) {
